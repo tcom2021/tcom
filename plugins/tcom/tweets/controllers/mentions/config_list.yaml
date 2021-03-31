@@ -1,0 +1,12 @@
+title: Mentions
+modelClass: Tcom\Tweets\Models\Mention
+list: $/tcom/tweets/models/mention/columns.yaml
+recordUrl: 'tcom/tweets/mentions/update/:id'
+noRecordsMessage: 'backend::lang.list.no_records'
+recordsPerPage: 20
+showSetup: true
+showCheckboxes: true
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: 'backend::lang.list.search_prompt'

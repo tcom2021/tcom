@@ -1,0 +1,8 @@
+[demoTodo]
+max = 10
+==
+<head>
+    ...
+    {% placeholder head %}
+{% component 'demoTodo' %}
+</head>

@@ -1,0 +1,10 @@
+name: Tweets
+form: $/tcom/tweets/models/tweets/fields.yaml
+modelClass: Tcom\Tweets\Models\Tweets
+defaultRedirect: tcom/tweets/tweets
+create:
+    redirect: 'tcom/tweets/tweets/update/:id'
+    redirectClose: tcom/tweets/tweets
+update:
+    redirect: tcom/tweets/tweets
+    redirectClose: tcom/tweets/tweets

@@ -1,0 +1,4 @@
+title: Mentions
+modelClass: Tcom\Tweets\Models\Mention
+toolbar:
+    buttons: reorder_toolbar

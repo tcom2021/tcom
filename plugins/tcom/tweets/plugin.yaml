@@ -1,0 +1,16 @@
+plugin:
+    name: 'tcom.tweets::lang.plugin.name'
+    description: 'tcom.tweets::lang.plugin.description'
+    author: tcom
+    icon: oc-icon-twitter
+    homepage: ''
+navigation:
+    main-menu-item:
+        label: Tweets
+        url: tcom/tweets/tweets
+        icon: icon-twitter
+        sideMenu:
+            side-menu-item:
+                label: Mentions
+                url: tcom/tweets/mentions
+                icon: icon-users

@@ -1,0 +1,11 @@
+columns:
+    mention:
+        label: 'Used Slugs'
+        type: text
+        searchable: true
+        sortable: true
+    country:
+        label: Country
+        type: text
+        searchable: true
+        sortable: true

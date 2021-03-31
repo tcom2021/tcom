@@ -1,0 +1,4 @@
+title: Tweets
+modelClass: Tcom\Tweets\Models\Tweets
+toolbar:
+    buttons: reorder_toolbar

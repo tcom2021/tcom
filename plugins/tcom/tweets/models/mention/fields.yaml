@@ -1,0 +1,17 @@
+tabs:
+    fields:
+        country:
+            label: Country
+            options:
+                Norway: Norway
+                Sweden: Sweden
+                Ethiopia: Ethiopia
+            showSearch: true
+            span: auto
+            type: dropdown
+            tab: 'Tab 1'
+        mention:
+            label: 'Used Slugs'
+            span: auto
+            type: text
+            tab: 'Tab 1'

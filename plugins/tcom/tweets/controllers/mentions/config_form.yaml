@@ -1,0 +1,11 @@
+name: Mentions
+modelClass: Tcom\Tweets\Models\Mention
+form: $/tcom/tweets/models/mention/fields.yaml
+defaultRedirect: tcom/tweets/mentions
+create:
+    redirect: 'tcom/tweets/mentions/update/:id'
+    redirectClose: tcom/tweets/mentions
+update:
+    redirect: tcom/tweets/mentions
+    redirectClose: tcom/tweets/mentions
+preview: {  }
