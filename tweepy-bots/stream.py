@@ -2,16 +2,20 @@ import tweepy
 import logging
 import time
 import datetime
-from config import create_api
+from config import create_api_test
 import os
 import utils
 from timeit import default_timer as timer
+from limits import limits
 
+f_name_following = os.path.dirname(os.path.realpath(__file__)) + os.sep + 'newfollowings.txt'
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
-
+my_limits = limits()
+followList= []
+wait_minutes = 0
 # == OAuth Authentication ==
-api = create_api()
+api = create_api_test()
 
 
 class MyStreamListener(tweepy.StreamListener):
@@ -27,6 +31,8 @@ class MyStreamListener(tweepy.StreamListener):
         self.file_name = file_name
         self.follow_counter = follow_counter
         self.start_time = timer()
+        self.wait_minutes = 0
+
         logger.info(os.path.dirname(os.path.realpath(__file__)))
 
     def set_tweet_id(self, tweet_id):
@@ -50,28 +56,41 @@ class MyStreamListener(tweepy.StreamListener):
         if utils.is_Invalid_tweet(tweet, self.latest_tweet_id, self.me.id, self.file_name):
             return
         try:    
-            tweet.retweet()
-            logger.info("Tweet Retweeted")
-            tweet_number = utils.increment(self.nr_tweets)
-            logger.info(tweet.id)
-            utils.write_to_file(self.file_name, tweet.text)
-            wait_minutes = 7
-            logger.info(
-                f"{datetime.datetime.now()} Tweet {tweet_number}: "
-                f"{tweet.text}")
-            if  not self.follow_limit_reached():
+            #Limit
+            if my_limits.tweetlimit():
+                tweet.retweet()
+                my_limits.update_today_tweet()
+                logger.info("Tweet Retweeted")
+                tweet_number = utils.increment(self.nr_tweets)
+                logger.info(tweet.id)
+                utils.write_to_file(self.file_name, tweet.text)
+                self.wait_minutes = 7
+                logger.info(
+                    f"{datetime.datetime.now()} Tweet {tweet_number}: "
+                    f"{tweet.text}")
+            elif my_limits.likelimit():
+                tweet.favorite()
+                my_limits.update_today_like()
+            
+            if  my_limits.followlimit():
                 if not tweet.user.following:
                     logger.info(f'Follow user {tweet.user.name.encode("utf-8")}')
                     tweet.user.follow()
-                    self.follow_counter = self.follow_counter + 1
+                    utils.write_to_followerfile(f_name_following,tweet.user.screen_name)
+                    my_limits.update_today_follow()
                 if utils.is_retweeted_tweet(tweet):
                     logger.info(f'Follow user {tweet.retweeted_status.user.name.encode("utf-8")}')
-                    tweet.retweeted_status.user.follow()
-                    self.follow_counter = self.follow_counter + 1
+                    if not tweet.retweeted_status.user.following:
+                        tweet.retweeted_status.user.follow()
+                        utils.write_to_followerfile(f_name_following,tweet.retweeted_status.user.screen_name)
+                        self.follow_counter = self.follow_counter + 1
+                        my_limits.update_today_follow()
             self.reset_limit_counters()
             self.set_tweet_id(tweet.id)
-            logger.info(f" waiting for {wait_minutes} minutes ...")
-            time.sleep(wait_minutes * 60)
+            
+            
+            logger.info(f" waiting for {self.wait_minutes} minutes ...")
+            time.sleep(self.wait_minutes * 60)
         except tweepy.TweepError as e:
             logger.error(e.reason)
         except UnicodeEncodeError as e:

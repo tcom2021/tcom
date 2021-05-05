@@ -2,10 +2,12 @@ import tweepy
 import time
 import sys
 from datetime import datetime
-from config import create_api
+from config import  create_api_test
+from limits import limits
 import os
 import utils
 import logging
+import atexit
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -15,39 +17,57 @@ logger = logging.getLogger()
 #python tweetlinesfromfile.py
 
 # == OAuth Authentication ==
-api = create_api()
+#api = create_api()
+api = create_api_test()
 
 f_name_read = os.path.dirname(os.path.realpath(__file__)) + os.sep + 'campaign_tweets.txt'
 f_name_write = os.path.dirname(os.path.realpath(__file__)) + os.sep + 'streamed_tweets.txt'
+my_Limits = limits()
 tweet_no = 0
 f = utils.read_from_file(f_name_read)
 interval = 15
-internal_interval = 2
+internal_interval = 0
 tweet_bunch = 10
 i = 1
+toremove =[]
 
 for line in f:
-    if utils.tweet_exists(f_name_write, line):
-        continue
-    try:
-        logger.info(f"Tweeting: {line}")
-        api.update_status(line)
-        logger.info(f"Writing tweet {utils.increment(tweet_no)} to file")
-        tweet_no = tweet_no + 1
-        utils.write_to_file(f_name_write, line)
-        if i == tweet_bunch:
-            logger.info(f" waiting for {interval} minutes ...")
-            time.sleep(interval*60)
-            i = 1
-        else:
-            time.sleep(internal_interval*60)
-        i += 1
-    except tweepy.TweepError as e:
-        logger.error(e.reason)
-        pass
-    except UnicodeEncodeError as e:
-        logger.error(e.reason)
-        pass
-    except ConnectionResetError:
-        logger.error("Error detected")
-        pass
+    if my_Limits.tweetlimit():
+        if utils.tweet_exists(f_name_write, line):
+            continue
+        try:
+            logger.info(f"Tweeting: {line}")
+            api.update_status(line)
+            toremove.append(line)
+            my_Limits.update_today_tweet()
+            logger.info(f"Writing tweet {utils.increment(tweet_no)} to file")
+            tweet_no = tweet_no + 1
+            utils.write_to_file(f_name_write, line)
+            if i == tweet_bunch:
+                logger.info(f" waiting for {interval} minutes ...")
+                time.sleep(interval*60)
+                i = 1
+            else:
+                time.sleep(internal_interval*60)
+            i += 1
+        except tweepy.TweepError as e:
+            logger.error(e.reason)
+            if e.api_code == 187 :
+                toremove.append(line)
+                continue
+            elif e.api_code == 261:
+                break
+            elif e.api_code == 186: #[{'code': 186, 'message': 'Tweet needs to be a bit shorter.'}]
+                toremove.append(line)
+                continue
+            
+        except UnicodeEncodeError as e:
+            logger.error(e.reason)
+            toremove.append(line)
+            continue
+        except ConnectionResetError:
+            logger.error("Error detected")
+            pass
+    else: break
+
+atexit.register(utils.exit_handler,[t for t in f if(t not in toremove)],f_name_read)

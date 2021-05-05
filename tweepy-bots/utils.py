@@ -15,6 +15,12 @@ def write_to_file(file_name, tweet):
     f.write('\n')
     f.close()
 
+def write_to_followerfile(file_name, name):
+    logger.info(f"Writing a tweet to {file_name}")
+    f = open(file_name, "a")
+    f.write(name)
+    f.write('\n')
+    f.close()
 
 def read_from_file(file_name):
     logger.info(f"Reading from {file_name}")
@@ -69,3 +75,9 @@ def is_retweeted_tweet(tweet):
         logger.info('This is a retweet tweet')
         return True
     return False
+
+def exit_handler(lst, fname):
+    print('My application is ending: writing the remaining list!')
+    with open(fname, 'w') as filetowrite:
+        for itm in lst:
+            filetowrite.write(itm)
