@@ -2,7 +2,7 @@ import tweepy
 import logging
 import time
 import datetime
-from config import create_api_test
+from config import create_api
 import os
 import utils
 from timeit import default_timer as timer
@@ -15,7 +15,7 @@ my_limits = limits()
 followList= []
 wait_minutes = 0
 # == OAuth Authentication ==
-api = create_api_test()
+api = create_api()
 
 
 class MyStreamListener(tweepy.StreamListener):

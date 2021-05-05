@@ -2,7 +2,7 @@ import tweepy
 import time
 import sys
 from datetime import datetime
-from config import  create_api_test
+from config import  create_api
 from limits import limits
 import os
 import utils
@@ -17,8 +17,8 @@ logger = logging.getLogger()
 #python tweetlinesfromfile.py
 
 # == OAuth Authentication ==
-#api = create_api()
-api = create_api_test()
+api = create_api()
+#api = create_api_test()
 
 f_name_read = os.path.dirname(os.path.realpath(__file__)) + os.sep + 'campaign_tweets.txt'
 f_name_write = os.path.dirname(os.path.realpath(__file__)) + os.sep + 'streamed_tweets.txt'
