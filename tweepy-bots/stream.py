@@ -13,7 +13,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 my_limits = limits()
 followList= []
-wait_minutes = 0
 # == OAuth Authentication ==
 api = create_api()
 
@@ -31,7 +30,7 @@ class MyStreamListener(tweepy.StreamListener):
         self.file_name = file_name
         self.follow_counter = follow_counter
         self.start_time = timer()
-        self.wait_minutes = 0
+        self.wait_minutes = 7
 
         logger.info(os.path.dirname(os.path.realpath(__file__)))
 
@@ -107,11 +106,11 @@ class MyStreamListener(tweepy.StreamListener):
 def main(t_keyword, f_keyword):
     myStreamListener = MyStreamListener(api)
     myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
-    myStream.filter(track=t_keyword, languages=["en", "am"], is_async=False)
+    myStream.filter(track=t_keyword, follow=f_keyword, languages=["en", "am"], is_async=False)
 
 
 if __name__ == "__main__":
-    string_pattern_to_track = ["AmharaGenocide", "EthiopianLivesMatter", "ItsMyDam", "ItsOurDam", "FillTheDam", "EthiopiaPrevails", "StandWithEthiopia",
+    string_pattern_to_track = ["EthiopianLivesMatter", "ItsMyDam", "ItsOurDam", "FillTheDam", "EthiopiaPrevails", "StandWithEthiopia",
                                "EthioEritreaPrevail", "SupportEthiopia", "UNSCsupportEthiopia", "UnityForEthiopia", "GleanEthiopia", "GetEthiopianFactsRight",
                                "TplfLies", "FakeAxumMassacre", "DeliverTheAid", "TPLFisaTerroristGroup",
                                "TPLFisTheCause", "TPLFCrimes", "TPLFcrimes", "MaiKadraMassacre", "AxumFiction",
@@ -121,7 +120,14 @@ if __name__ == "__main__":
     followers_to_track = ["4077439067",  # @neaminzeleke
                           "1357188308242169856",  # @gleanethiopian
                           "276370580",  # @dejene_2011
-                          "1345123740603047936"  # @unityforethio
+                          "1345123740603047936",  # @unityforethio
+                          "2651039676", #@ETHinSweden embassy
+                          "1186304222402351104" , #@kassahungedlu
+                          "985121551434616833", #@BisratLKabeta
+                          "1279521349388644353", #@sofanit_t
+                          "707189905" , #BilleneSeyoum
+                          "1168167671151628290", #@AbiyAhmedAli
+                          "1246052515063480320" #@BlenDiriba
                           ]
 
     main(string_pattern_to_track, followers_to_track)
