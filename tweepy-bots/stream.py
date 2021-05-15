@@ -127,7 +127,9 @@ if __name__ == "__main__":
                           "1279521349388644353", #@sofanit_t
                           "707189905" , #BilleneSeyoum
                           "1168167671151628290", #@AbiyAhmedAli
-                          "1246052515063480320" #@BlenDiriba
+                          "1246052515063480320", #@BlenDiriba
+                          "1278675004968878081", #@LanderMiddle
+                          "963535775571828737",  #@KelikoSmart
                           ]
 
     main(string_pattern_to_track, followers_to_track)
