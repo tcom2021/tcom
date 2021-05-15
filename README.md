@@ -53,6 +53,14 @@ Then you can install the Tweepy package. First, you need to activate the newly c
 $ source ./venv/bin/activate
 $ pip install tweepy
 
+Set the enviroment variables
+Note: No space befor and after =
+$ export CONSUMER_KEY=yourCONSUMER_KEY
+$ export CONSUMER_SECRET=yourCONSUMER_SECRET
+$ export ACCESS_KEY=yourACCESS_KEY
+$ export ACCESS_SECRET=YourACCESS_SECRET
+
+
 Now that Tweepy is installed we can run an example bot as:
 $python stream.py
 
