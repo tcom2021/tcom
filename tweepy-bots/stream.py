@@ -65,28 +65,35 @@ class MyStreamListener(tweepy.StreamListener):
                 utils.write_to_file(self.file_name, tweet.text)
                 self.wait_minutes = 7
                 logger.info(
-                    f"{datetime.datetime.now()} Tweet {tweet_number}: "
+                    f"{datetime.datetime.now()}  Tweet {tweet_number}: "
                     f"{tweet.text}")
             elif my_limits.likelimit():
+                logger.info("Tweet liked")
                 tweet.favorite()
                 my_limits.update_today_like()
+
             
             if  my_limits.followlimit():
                 if not tweet.user.following:
                     logger.info(f'Follow user {tweet.user.name.encode("utf-8")}')
                     tweet.user.follow()
                     utils.write_to_followerfile(f_name_following,tweet.user.screen_name)
+                    logger.info(f'Write on newfollowings file user {tweet.user.name.encode("utf-8")}')
                     my_limits.update_today_follow()
+                    logger.info(f'Update Follow limit ')
+
                 if utils.is_retweeted_tweet(tweet):
                     logger.info(f'Follow user {tweet.retweeted_status.user.name.encode("utf-8")}')
                     if not tweet.retweeted_status.user.following:
                         tweet.retweeted_status.user.follow()
                         utils.write_to_followerfile(f_name_following,tweet.retweeted_status.user.screen_name)
+                        logger.info(f'Write on newfollowings file user {tweet.user.name.encode("utf-8")}')
                         self.follow_counter = self.follow_counter + 1
                         my_limits.update_today_follow()
+                        logger.info(f'Update Follow limit ')
+
             self.reset_limit_counters()
             self.set_tweet_id(tweet.id)
-            
             
             logger.info(f" waiting for {self.wait_minutes} minutes ...")
             time.sleep(self.wait_minutes * 60)

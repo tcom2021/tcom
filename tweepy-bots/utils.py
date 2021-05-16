@@ -1,5 +1,13 @@
 import datetime
 import logging
+import os
+import tweepy
+import time
+import sys
+from datetime import datetime
+from limits import limits
+import logging
+import atexit
 
 logger = logging.getLogger()
 
@@ -36,6 +44,31 @@ def get_tweet_text(tweet):
         tweet = tweet.split(': ', 1)[1]
     return tweet
 
+def unfollow(api):
+    SCREEN_NAME = 'Ethio_Norwagian'
+    f_name_read = os.path.dirname(os.path.realpath(__file__)) + os.sep + 'newfollowings.txt'
+    friendhunted = utils.read_from_file(f_name_read)
+    friendhunted_id =[]
+    followers = api.followers_ids(SCREEN_NAME)
+    friends = api.friends_ids(SCREEN_NAME)
+    notfollowing = [x for x in friends if x not in followers] 
+
+    for friend in friendhunted:
+        try:
+            friendhunted_id.append(api.get_user(screen_name = friend.rstrip("\n")))
+        except tweepy.TweepError as e:
+            pass
+    
+    notfollowing = [x for x in friendhunted_id if x not in followers]
+    count = 1
+    for f in notfollowing:
+        #api.destroy_friendship(f)
+        name = api.get_user(f).screen_name
+        logger.info('Unfollow ', api.get_user(f).screen_name)
+        count += 1
+        if count%10 ==0:
+            sleep(60*60)
+    print ("dfsdfsdg ")
 
 # tweet = "RT @NeaminZeleke: Egypt snubbing the African Union and insisting on involving the EU &amp;
 # USA in talks with #Ethiopia about the #GERD is as su…"
@@ -47,10 +80,8 @@ def tweet_exists(file_name, tweet):
             return True
     return False
 
-
-
-
 def is_Invalid_tweet(tweet, latest_tweet_id, me_id, file_name):
+    logger.info('Checking if tweet is valid ')
     if tweet_exists(file_name, tweet.text) or\
             tweet.user.id == me_id or\
             tweet.in_reply_to_status_id is not None or\
@@ -65,7 +96,9 @@ def is_Invalid_tweet(tweet, latest_tweet_id, me_id, file_name):
             "AbiyToICC" in str(tweet) or\
             tweet.id < latest_tweet_id:
             #tweet.retweeted:
+        logger.info('The tweet is not valid')
         return True
+    logger.info('The tweet is valid')
     return False
 
 
@@ -74,10 +107,11 @@ def is_retweeted_tweet(tweet):
     if 'retweeted_status' in str(tweet):
         logger.info('This is a retweet tweet')
         return True
+    logger.info('This is not a retweet tweet')
     return False
 
 def exit_handler(lst, fname):
-    print('My application is ending: writing the remaining list!')
+    logger.info('My application is ending: writing the remaining list!')
     with open(fname, 'w') as filetowrite:
         for itm in lst:
             filetowrite.write(itm)
