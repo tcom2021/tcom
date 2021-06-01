@@ -45,10 +45,12 @@ for line in f:
             utils.write_to_file(f_name_write, line)
             if i == tweet_bunch:
                 logger.info(f" waiting for {interval} minutes ...")
+                interval = random.randint(15,30)
                 time.sleep(interval*60)
                 i = 1
             else:
-                time.sleep(internal_interval*60)
+                internal_interval = random.randint(35,180)
+                time.sleep(internal_interval)
             i += 1
         except tweepy.TweepError as e:
             logger.error(e.reason)
@@ -69,5 +71,6 @@ for line in f:
             logger.error("Error detected")
             pass
     else: break
+print("The list is Done" )
 
 atexit.register(utils.exit_handler,[t for t in f if(t not in toremove)],f_name_read)
