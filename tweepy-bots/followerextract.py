@@ -17,12 +17,21 @@ id = 1168167671151628290
   
 # fetching the user
 user = api.get_user(id)
-api.get_user(id)
-ids = api.followers_ids(id)
-print("USER NAME = ", user.screen_name)
 
+print("USER NAME = ", user.screen_name)
 keywords=["Consulate", "consulate", "Embassy", "embassy", "Ambassador"]
 potential_deplomats = []
+ids=[]
+
+
+def filewriter(fname, deplomats):
+    print("writing deplomats ---------")
+    f_name = os.path.dirname(os.path.realpath(__file__)) + os.sep + fname
+    with open(fname, 'w') as filetowrite:
+        for deplomat in deplomats:
+            filetowrite.write(deplomat)
+    
+
 for page in tweepy.Cursor(api.followers_ids, screen_name="AbiyAhmedAli").pages():
     ids.extend(page)
     for id in page:
@@ -33,16 +42,14 @@ for page in tweepy.Cursor(api.followers_ids, screen_name="AbiyAhmedAli").pages()
                     if key in user.description:
                         potential_deplomats.append(id)
                         potential_deplomats.append([user.screen_name, user.description])
+                        print("Deplomat added ", user.screen_name, user.description)
         except tweepy.TweepError as e:
             print(e.reason)
             continue
-    time.sleep(60)
+        time.sleep(60)
 
 print(len(ids)) 
-# fetching the followers_count
-followers_count = user.followers_count
-keywords=["Consulate", "consulate", "Embassy", "embassy", "Ambassador"]
-print("The number of followers of the user are : " + str(followers_count))
+filewriter("deplomats.txt",ids)
 
 
 

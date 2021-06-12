@@ -2,8 +2,9 @@ import tweepy
 import time
 import sys
 from datetime import datetime
-from config import  create_api
+from config import  create_api, create_api_List
 from limits import limits
+import random
 import os
 import utils
 import logging
@@ -17,8 +18,10 @@ logger = logging.getLogger()
 #python tweetlinesfromfile.py
 
 # == OAuth Authentication ==
-api = create_api()
-#api = create_api_test()
+# api = create_api()
+# api = create_api_list()
+
+apilist = create_api_List()
 
 f_name_read = os.path.dirname(os.path.realpath(__file__)) + os.sep + 'campaign_tweets.txt'
 f_name_write = os.path.dirname(os.path.realpath(__file__)) + os.sep + 'streamed_tweets.txt'
@@ -26,10 +29,16 @@ my_Limits = limits()
 tweet_no = 0
 f = utils.read_from_file(f_name_read)
 interval = 15
-internal_interval = 0
+internal_interval = 0.5
 tweet_bunch = 10
 i = 1
 toremove =[]
+
+def tweet_forall(txt):
+    for api in apilist:
+        api.update_status(txt)
+        print(api.me().screen_name, "tweeted [", txt, "]")
+
 
 for line in f:
     if my_Limits.tweetlimit():
@@ -37,7 +46,8 @@ for line in f:
             continue
         try:
             logger.info(f"Tweeting: {line}")
-            api.update_status(line)
+            #create_api().update_status(line)
+            tweet_forall(line)
             toremove.append(line)
             my_Limits.update_today_tweet()
             logger.info(f"Writing tweet {utils.increment(tweet_no)} to file")

@@ -7,6 +7,7 @@ import os
 import utils
 from timeit import default_timer as timer
 from limits import limits
+from random import random
 
 f_name_following = os.path.dirname(os.path.realpath(__file__)) + os.sep + 'newfollowings.txt'
 logging.basicConfig(level=logging.INFO)
@@ -15,7 +16,6 @@ my_limits = limits()
 followList= []
 # == OAuth Authentication ==
 api = create_api()
-
 
 class MyStreamListener(tweepy.StreamListener):
 
@@ -30,7 +30,7 @@ class MyStreamListener(tweepy.StreamListener):
         self.file_name = file_name
         self.follow_counter = follow_counter
         self.start_time = timer()
-        self.wait_minutes = 7
+        self.wait_minutes = 
 
         logger.info(os.path.dirname(os.path.realpath(__file__)))
 
@@ -50,7 +50,6 @@ class MyStreamListener(tweepy.StreamListener):
             return True
         return False
 
-
     def on_status(self, tweet):
         if utils.is_Invalid_tweet(tweet, self.latest_tweet_id, self.me.id, self.file_name):
             return
@@ -63,7 +62,7 @@ class MyStreamListener(tweepy.StreamListener):
                 tweet_number = utils.increment(self.nr_tweets)
                 logger.info(tweet.id)
                 utils.write_to_file(self.file_name, tweet.text)
-                self.wait_minutes = 7
+                self.wait_minutes = random.randint(6,10)
                 logger.info(
                     f"{datetime.datetime.now()}  Tweet {tweet_number}: "
                     f"{tweet.text}")
@@ -72,7 +71,6 @@ class MyStreamListener(tweepy.StreamListener):
                 tweet.favorite()
                 my_limits.update_today_like()
 
-            
             if  my_limits.followlimit():
                 if not tweet.user.following:
                     logger.info(f'Follow user {tweet.user.name.encode("utf-8")}')

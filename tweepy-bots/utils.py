@@ -19,7 +19,7 @@ def increment(arg):
 def write_to_file(file_name, tweet):
     logger.info(f"Writing a tweet to {file_name}")
     f = open(file_name, "a")
-    f.write(f"{datetime.datetime.now()} {tweet}")
+    f.write(f"{datetime.now()} {tweet}")
     f.write('\n')
     f.close()
 
