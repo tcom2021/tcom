@@ -2,12 +2,13 @@ import tweepy
 import logging
 import time
 import datetime
-from config import create_api
+from config import create_api_List
 import os
 import utils
 from timeit import default_timer as timer
 from limits import limits
-from random import random
+import random
+import multiprocessing as mp
 
 f_name_following = os.path.dirname(os.path.realpath(__file__)) + os.sep + 'newfollowings.txt'
 logging.basicConfig(level=logging.INFO)
@@ -15,7 +16,9 @@ logger = logging.getLogger()
 my_limits = limits()
 followList= []
 # == OAuth Authentication ==
-api = create_api()
+api_List = create_api_List()
+api=api_List[0]
+
 
 class MyStreamListener(tweepy.StreamListener):
 
@@ -30,7 +33,7 @@ class MyStreamListener(tweepy.StreamListener):
         self.file_name = file_name
         self.follow_counter = follow_counter
         self.start_time = timer()
-        self.wait_minutes = 
+        self.wait_minutes = 15
 
         logger.info(os.path.dirname(os.path.realpath(__file__)))
 
@@ -57,6 +60,8 @@ class MyStreamListener(tweepy.StreamListener):
             #Limit
             if my_limits.tweetlimit():
                 tweet.retweet()
+                for i in range(1,len(api_List)):
+                    api_List[i].retweet(tweet.id)
                 my_limits.update_today_tweet()
                 logger.info("Tweet Retweeted")
                 tweet_number = utils.increment(self.nr_tweets)
@@ -75,6 +80,8 @@ class MyStreamListener(tweepy.StreamListener):
                 if not tweet.user.following:
                     logger.info(f'Follow user {tweet.user.name.encode("utf-8")}')
                     tweet.user.follow()
+                    for i in range(1,len(api_List)):
+                        api_List[i].create_friendship(tweet.user.id)
                     utils.write_to_followerfile(f_name_following,tweet.user.screen_name)
                     logger.info(f'Write on newfollowings file user {tweet.user.name.encode("utf-8")}')
                     my_limits.update_today_follow()
@@ -84,6 +91,8 @@ class MyStreamListener(tweepy.StreamListener):
                     logger.info(f'Follow user {tweet.retweeted_status.user.name.encode("utf-8")}')
                     if not tweet.retweeted_status.user.following:
                         tweet.retweeted_status.user.follow()
+                        for i in range(1,len(api_List)):
+                            api_List[i].create_friendship(tweet.retweeted_status.user.id)
                         utils.write_to_followerfile(f_name_following,tweet.retweeted_status.user.screen_name)
                         logger.info(f'Write on newfollowings file user {tweet.user.name.encode("utf-8")}')
                         self.follow_counter = self.follow_counter + 1
@@ -112,7 +121,7 @@ def main(t_keyword, f_keyword):
     myStreamListener = MyStreamListener(api)
     myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
     myStream.filter(track=t_keyword, follow=f_keyword, languages=["en", "am"], is_async=False)
-
+    
 
 if __name__ == "__main__":
     string_pattern_to_track = ["EthiopianLivesMatter", "ItsMyDam", "ItsOurDam", "FillTheDam", "EthiopiaPrevails", "StandWithEthiopia",
@@ -136,5 +145,4 @@ if __name__ == "__main__":
                           "1278675004968878081", #@LanderMiddle
                           "963535775571828737",  #@KelikoSmart
                           ]
-
     main(string_pattern_to_track, followers_to_track)

@@ -20,7 +20,7 @@ ACCESS_SECRET = environ['ACCESS_SECRET']
 
 
 
-def create_api_test():
+def create_api():
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
     api = tweepy.API(auth, wait_on_rate_limit=True,
@@ -33,7 +33,7 @@ def create_api_test():
     logger.info("API created")
     return api
 
-def create_api( consumer_name,
+def create_api_lical( consumer_name,
                 consumer_key, 
                 consumer_secret, 
                 access_token,
@@ -81,7 +81,7 @@ def create_api_List():
                 access_token = row[3]
                 access_token_secret = row[4]
                 line_count += 1
-                newapi = create_api( consumer_name,
+                newapi = create_api_lical( consumer_name,
                     consumer_key, 
                     consumer_secret, 
                     access_token,
