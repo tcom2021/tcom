@@ -16,7 +16,7 @@ api = create_api()
 
 class MyStreamListener(tweepy.StreamListener):
 
-    def __init__(self, api, nr_tweets=0, latest_tweet_id=1384927621063004164,
+    def __init__(self, api, nr_tweets=0, latest_tweet_id=1397183488927977482,
                  file_name=os.path.dirname(os.path.realpath(__file__)) + os.sep + "streamed_tweets.txt",
                  follow_counter=0
                  ):
@@ -30,7 +30,8 @@ class MyStreamListener(tweepy.StreamListener):
         logger.info(os.path.dirname(os.path.realpath(__file__)))
 
     def set_tweet_id(self, tweet_id):
-        self.latest_tweet_id = tweet_id
+       # more recent than the ones already processed
+        max(self.latest_tweet_id, tweet_id)
 
     def reset_limit_counters(self):
         elapsed_time = timer() - self.start_time # Elapse time in seconds
@@ -39,6 +40,8 @@ class MyStreamListener(tweepy.StreamListener):
             self.follow_counter = 0
 
     def follow_limit_reached(self):
+        # limits = api.rate_limit_status()
+        # logger.info(limits)
         elapsed_time = timer() - self.start_time # Elapse time in seconds
         logger.info(f"Total users followed = {self.follow_counter}")
         if  elapsed_time < 72000 and self.follow_counter > 300:  # 72000 seconds = 20 hrs
@@ -92,12 +95,14 @@ def main(t_keyword, f_keyword):
 
 
 if __name__ == "__main__":
-    string_pattern_to_track = ["AmharaGenocide", "EthiopianLivesMatter", "ItsMyDam", "ItsOurDam", "FillTheDam", "EthiopiaPrevails", "StandWithEthiopia",
-                               "EthioEritreaPrevail", "SupportEthiopia", "UNSCsupportEthiopia", "UnityForEthiopia", "GleanEthiopia", "GetEthiopianFactsRight",
+    string_pattern_to_track = ["HandsOffEthiopia", "ForwardElectionEthiopia", "PathToProsperity", "EthiopiaVotes", "EthiopiaDecides", "EthiopianLivesMatter",
+                               "ItsMyDam", "ItsOurDam", "FillTheDam", "EthiopiaPrevails", "StandWithEthiopia",
+                               "EthioEritreaPrevail", "SupportEthiopia", "UNSCsupportEthiopia", "UnityForEthiopia",
+                                "GleanEthiopia", "GetEthiopianFactsRight", "HOAprevails",
                                "TplfLies", "FakeAxumMassacre", "DeliverTheAid", "TPLFisaTerroristGroup",
                                "TPLFisTheCause", "TPLFCrimes", "TPLFcrimes", "MaiKadraMassacre", "AxumFiction",
                                "TPLF_Junta", "DisarmTPLF", "StopScapegoatingEritrea",
-                               "RisingEthiopia", "TPLFisDEAD"] # EthiopianLivesMatter AbiyMustLead
+                               "RisingEthiopia", "TPLFisDEAD"] # EthiopianLivesMatter AbiyMustLead "AmharaGenocide",
 
     followers_to_track = ["4077439067",  # @neaminzeleke
                           "1357188308242169856",  # @gleanethiopian

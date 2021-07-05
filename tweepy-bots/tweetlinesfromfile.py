@@ -42,6 +42,16 @@ for line in f:
         else:
             time.sleep(internal_interval*60)
         i += 1
+	except tweepy.TweepError as e:
+		logger.error(e.reason)
+		if e.api_code == 187 :
+			toremove.append(line)
+			continue
+		elif e.api_code == 261:
+			break
+		elif e.api_code == 186: #[{'code': 186, 'message': 'Tweet needs to be a bit shorter.'}]
+			toremove.append(line)
+			continue
     except tweepy.TweepError as e:
         logger.error(e.reason)
         pass

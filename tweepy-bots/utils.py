@@ -11,8 +11,8 @@ def increment(arg):
 def write_to_file(file_name, tweet):
     logger.info(f"Writing a tweet to {file_name}")
     f = open(file_name, "a")
-    f.write(f"{datetime.datetime.now()} {tweet}")
-    f.write('\n')
+    f.write(f"{datetime.datetime.now()} {tweet.encode('utf-8')}")
+    #f.write('\n')
     f.close()
 
 
@@ -57,6 +57,7 @@ def is_Invalid_tweet(tweet, latest_tweet_id, me_id, file_name):
             "WarOnTigray" in str(tweet) or\
             "StandWithTigray" in str(tweet) or\
             "AbiyToICC" in str(tweet) or\
+            "AbiyForICC" in str(tweet) or\
             tweet.id < latest_tweet_id:
             #tweet.retweeted:
         return True
@@ -69,3 +70,19 @@ def is_retweeted_tweet(tweet):
         logger.info('This is a retweet tweet')
         return True
     return False
+
+def exit_handler(lst, fname):
+    logger.info('My application is ending: writing the remaining list!')
+    with open(fname, 'w') as filetowrite:
+        for itm in lst:
+            filetowrite.write(itm)
+
+# Python Twitter Bot — Send an Image with text
+# Sending a tweet with an image is just as simple, you need to know the absolute path to where the image is saved on your device.
+# image = 'path-where-image-is-saved/image.jpg'
+# def updateImage(image):
+#     msg = random.choice(messages)
+#     if len(msg) < 160:
+#         api.update_with_media(filename=image, status=msg)
+    
+# updateImage(image)
